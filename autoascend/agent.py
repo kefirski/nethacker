@@ -13,7 +13,7 @@ from . import utils
 from .character import Character
 from .exceptions import AgentPanic, AgentFinished, AgentChangeStrategy
 from .exploration_logic import ExplorationLogic
-from .global_logic import GlobalLogic, EARLY_DIG_XL
+from .global_logic import GlobalLogic, EARLY_DIG_XL, GRIND_XL
 from .glyph import MON, C, Hunger, G, SHOP
 from .item import Item, flatten_items
 from .item.inventory import Inventory
@@ -1719,7 +1719,8 @@ class Agent:
             yield False
             return
         # stay safe: let fight2 / emergency_strategy handle threats before we spend turns digging
-        if self.blstats.hitpoints < 0.7 * self.blstats.max_hitpoints:
+        if self.blstats.hitpoints < 0.7 * self.blstats.max_hitpoints and \
+                not self._early_dig_through_low_hp():
             yield False
             return
         for _, my, mx, _, _ in self.get_visible_monsters():
@@ -1778,6 +1779,33 @@ class Agent:
                 self._pick_dig_attempts[key] = 8
                 if 'direction' in self.message:
                     self.step(A.Command.ESC)
+
+    def _early_dig_through_low_hp(self):
+        # hypothesis: the early pick dive (every Archeologist, from EARLY_DIG_XL, before GRIND_XL)
+        # falls Dlvl 1 -> 8 in ~200 turns at Xp 5 and ~40 HP, then stalls: the first real fight drops
+        # HP under the 70% dig gate and the bot rests on the level instead of leaving it. Below Xp 10
+        # a hero regains only 1 HP per 42/(Xp+2)+1 turns (allmain.c regen_hp: 7 turns at Xp 5), so
+        # getting back to 70% takes 100-300 turns among monsters generated for (depth+Xp)/2 -- traces
+        # show Archeologists sitting on Elbereth at 2-12/48 HP for 400 turns on Dlvl 8 until killed
+        # (11 of 20 held-out Archeologist games end on Dlvl 6-8). Depth is banked on arrival and
+        # death is free, so a Dlvl-valued diver at low Xp keeps digging through low HP whenever no
+        # hostile is adjacent: the hole banks the next depth milestone and leaves this level's
+        # monsters behind (only adjacent ones follow). The crises emergency_strategy can actually
+        # fix (a safe low-HP prayer, a healing potion) still go first.
+        try:
+            if self.blstats.experience_level >= GRIND_XL or self.pick_for_digging() is None:
+                return False
+            hp, max_hp = self.blstats.hitpoints, self.blstats.max_hitpoints
+            if (hp * 7 <= max_hp or hp <= 5) and self.is_safe_to_pray(500):
+                return False
+            if hp < 1 / 3 * max_hp or hp < 8:
+                for item in flatten_items(self.inventory.items):
+                    if item.is_unambiguous() and item.category == nh.POTION_CLASS and \
+                            item.object.name in ('healing', 'extra healing', 'full healing'):
+                        return False
+            return True
+        except Exception:
+            return False
 
     def _check_undiggable_floor(self):
         if 'too hard to dig' in self.message:

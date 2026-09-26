@@ -1,8 +1,10 @@
 {
   "schema": "nethackers.solution/v1",
-  "name": "autoascend-dive-fork",
+  "name": "ascend",
   "root": "autoascend",
-  "parents": ["github.com/Komershan/nethacker@8e0e320501ad2b70f8d912e3e555d4f1e59f786e"],
+  "parents": [
+    "github.com/Komershan/nethacker@8e0e320501ad2b70f8d912e3e555d4f1e59f786e"
+  ],
   "influences": [
     "github.com/Komershan/nethacker@8e0e320501ad2b70f8d912e3e555d4f1e59f786e",
     "github.com/daglar-dragomirov/nethacker@cb527267cc6e3562ea8e02ccc09c90ff17fe8ccf"
