@@ -3,7 +3,7 @@
   "name": "ascend",
   "root": "autoascend",
   "parents": [
-    "github.com/kefirski/nethacker@91cc604d54aec632e67f8f21680319ac7e77a2fd"
+    "github.com/kefirski/nethacker@5b7f1ebb452945da5d76862ce21d8b1a0053c0f5"
   ],
   "influences": [
     "github.com/DT6A/nethacker@59ce30c509ef568366fe846afeba03dede939339",
