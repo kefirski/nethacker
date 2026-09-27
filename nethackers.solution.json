@@ -3,11 +3,14 @@
   "name": "ascend",
   "root": "autoascend",
   "parents": [
-    "github.com/Komershan/nethacker@8e0e320501ad2b70f8d912e3e555d4f1e59f786e"
+    "github.com/kefirski/nethacker@44e1e586cf4c6707b72b8d5238cb34311b615a01"
   ],
   "influences": [
-    "github.com/Komershan/nethacker@8e0e320501ad2b70f8d912e3e555d4f1e59f786e",
-    "github.com/daglar-dragomirov/nethacker@cb527267cc6e3562ea8e02ccc09c90ff17fe8ccf"
+    "github.com/DT6A/nethacker@59ce30c509ef568366fe846afeba03dede939339",
+    "github.com/daglar-dragomirov/nethacker@cb527267cc6e3562ea8e02ccc09c90ff17fe8ccf",
+    "github.com/kefirski/nethacker@44e1e586cf4c6707b72b8d5238cb34311b615a01",
+    "github.com/kenforthewin/nethack_astra@38b1a38b340d4cb154fe5e4411b2819dc407d5e3",
+    "github.com/vkurenkov/nethacker@ef6acf87e265f74600b914060f620d06117070a3"
   ],
   "entrypoint": "bot.py"
 }
